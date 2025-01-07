@@ -8,6 +8,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import lombok.SneakyThrows;
 
+import javax.crypto.SecretKey;
 import java.security.Key;
 import java.util.Date;
 import java.util.Map;
@@ -46,6 +47,34 @@ public class Ut {
                     .expiration(expiration)
                     .signWith(secretKey)
                     .compact();
+        }
+        public static boolean isValid(String secret, String jwtStr) {
+            SecretKey secretKey = Keys.hmacShaKeyFor(secret.getBytes());
+
+            try {
+                Jwts
+                        .parser()
+                        .verifyWith(secretKey)
+                        .build()
+                        .parse(jwtStr);
+            } catch (Exception e) {
+                return false;
+            }
+            return true;
+        }
+
+        public static Map<String, Object> payload(String secret, String jwtStr) {
+            SecretKey secretKey = Keys.hmacShaKeyFor(secret.getBytes());
+
+            try {
+                return (Map<String, Object>) Jwts
+                        .parser()
+                        .verifyWith(secretKey)
+                        .build()
+                        .parse(jwtStr);
+            } catch (Exception e) {
+                return null;
+            }
         }
     }
 }
