@@ -71,7 +71,8 @@ public class Ut {
                         .parser()
                         .verifyWith(secretKey)
                         .build()
-                        .parse(jwtStr);
+                        .parse(jwtStr)
+                        .getPayload();
             } catch (Exception e) {
                 return null;
             }
