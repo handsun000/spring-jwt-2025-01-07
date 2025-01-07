@@ -36,19 +36,16 @@ public class Ut {
                 claimsBuilder.add(entry.getKey(), entry.getValue());
             }
 
-            Claims claims = claimsBuilder.build();
-
             Date issuedAt = new Date();
             Date expiration = new Date(issuedAt.getTime() + 1000L * expireSeconds);
             Key secretKey = Keys.hmacShaKeyFor(secret.getBytes());
-            String jwt = Jwts.builder()
-                    .setClaims(claims)
-                    .setIssuedAt(issuedAt)
-                    .setExpiration(expiration)
-                    .signWith(secretKey, SignatureAlgorithm.HS256)
-                    .compact();
 
-            return jwt;
+            return Jwts.builder()
+                    .claims(body)
+                    .issuedAt(issuedAt)
+                    .expiration(expiration)
+                    .signWith(secretKey)
+                    .compact();
         }
     }
 }
