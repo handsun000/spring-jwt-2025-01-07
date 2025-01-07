@@ -1,5 +1,7 @@
 package com.ll.spring_jwt_2025_01_07.domain.member.member.service;
 
+import com.ll.spring_jwt_2025_01_07.domain.member.member.entity.Member;
+import com.ll.spring_jwt_2025_01_07.domain.member.member.repository.MemberRepository;
 import com.ll.spring_jwt_2025_01_07.standard.util.Ut;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -24,6 +26,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class AuthTokenServiceTest {
     @Autowired
     private AuthTokenService authTokenService;
+
+    @Autowired
+    private MemberRepository memberRepository;
 
     // 테스트용 토큰 만료기간 : 1년
     private int expireSeconds = 60 * 60 * 24 * 365;
@@ -67,5 +72,16 @@ public class AuthTokenServiceTest {
         String jwt = Ut.jwt.toString(secret, expireSeconds, Map.of("name", "Paul", "age", 23));
         assertThat(jwt).isNotBlank();
         System.out.println("jwt = " + jwt);
+    }
+
+    @Test
+    @DisplayName("")
+    void t4() {
+        Member member = memberRepository.findByUsername("user1").get();
+
+        String accessToken = authTokenService.genAccessToken(member);
+
+        assertThat(accessToken).isNotBlank();
+        System.out.println("accessToken = " + accessToken);
     }
 }
