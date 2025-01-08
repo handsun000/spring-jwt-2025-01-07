@@ -29,12 +29,11 @@ public class ApiV1PostController {
             long totalListedPostCount
     ) {
     }
+
     @GetMapping("/statistics")
     @Transactional(readOnly = true)
     public PostStatisticsResBody statistics() {
         Member actor = rq.getActor();
-
-        if (!actor.isAdmin()) throw new ServiceException("403-1", "관리자만 접근 가능합니다.");
 
         return new PostStatisticsResBody(
                 10,
