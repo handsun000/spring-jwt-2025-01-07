@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 
+import java.security.Security;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,18 +45,6 @@ public class Rq {
     }
 
     public Member getActor() {
-//        SecurityContext context = SecurityContextHolder.getContext();
-//
-//        Authentication authentication = context.getAuthentication();
-//
-//        if (authentication == null) return null;
-//
-//        if (authentication.getPrincipal() == null || authentication.getPrincipal() instanceof String) return null;
-//
-//        UserDetails user = (UserDetails) authentication.getPrincipal();
-//        String username = user.getUsername();
-//        return memberService.findByUsername(username).get();
-
         return Optional.ofNullable(
                         SecurityContextHolder
                                 .getContext()
@@ -63,9 +52,9 @@ public class Rq {
                 )
                 .map(Authentication::getPrincipal)
                 .filter(principal -> principal instanceof UserDetails)
-                .map(principal -> (UserDetails) principal)
-                .map(UserDetails::getUsername)
-                .flatMap(memberService::findByUsername)
+                .map(principal -> (SecurityUser) principal)
+                .map(SecurityUser::getId)
+                .flatMap(memberService::findById)
                 .orElse(null);
     }
 }
