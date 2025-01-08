@@ -274,7 +274,6 @@ public class ApiV1PostControllerTest {
                                 .content("""
                                         {
                                             "title": "축구 하실 분 계신가요?",
-                                            "content": "14시 까지 22명을 모아야 진행이 됩니다."
                                         }
                                         """)
                                 .contentType(
