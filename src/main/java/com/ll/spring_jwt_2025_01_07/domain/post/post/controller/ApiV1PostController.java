@@ -23,6 +23,25 @@ public class ApiV1PostController {
     private final PostService postService;
     private final Rq rq;
 
+    record PostStatisticsResBody(
+            long totalPostCount,
+            long totalPublishedPostCount,
+            long totalListedPostCount
+    ) {
+    }
+    @GetMapping("/statistics")
+    @Transactional(readOnly = true)
+    public PostStatisticsResBody statistics() {
+        Member actor = rq.getActor();
+
+        if (!actor.isAdmin()) throw new ServiceException("403-1", "관리자만 접근 가능합니다.");
+
+        return new PostStatisticsResBody(
+                10,
+                10,
+                10);
+    }
+
     @GetMapping("/mine")
     @Transactional(readOnly = true)
     public PageDto<PostDto> mine(
