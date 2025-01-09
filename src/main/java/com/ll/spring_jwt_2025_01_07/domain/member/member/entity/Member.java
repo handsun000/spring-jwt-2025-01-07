@@ -5,12 +5,13 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
+
 @Entity
 @Getter
 @Setter
@@ -53,10 +54,13 @@ public class Member extends BaseTime {
                 .map(SimpleGrantedAuthority::new)
                 .toList();
     }
+
     public List<String> getAuthoritiesAsStringList() {
         List<String> authorities = new ArrayList<>();
+
         if (isAdmin())
             authorities.add("ROLE_ADMIN");
+
         return authorities;
     }
 }

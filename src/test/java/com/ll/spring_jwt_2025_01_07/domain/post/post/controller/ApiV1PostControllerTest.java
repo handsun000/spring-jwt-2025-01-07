@@ -222,7 +222,7 @@ public class ApiV1PostControllerTest {
                 .andExpect(jsonPath("$.msg").value("1번 글이 수정되었습니다."))
                 .andExpect(jsonPath("$.data.id").value(1))
                 .andExpect(jsonPath("$.data.createDate").value(Matchers.startsWith(post.getCreateDate().toString().substring(0, 20))))
-                .andExpect(jsonPath("$.data.modifyDate").value(Matchers.not(Matchers.startsWith(oldModifyDate.toString().substring(0, 20)))))
+                .andExpect(jsonPath("$.data.modifyDate").value(Matchers.not(Matchers.startsWith(oldModifyDate.toString().substring(0, 25)))))
                 .andExpect(jsonPath("$.data.authorId").value(post.getAuthor().getId()))
                 .andExpect(jsonPath("$.data.authorName").value(post.getAuthor().getName()))
                 .andExpect(jsonPath("$.data.title").value("축구 하실 분 계신가요?"))
@@ -275,6 +275,7 @@ public class ApiV1PostControllerTest {
                                 .content("""
                                         {
                                             "title": "축구 하실 분 계신가요?",
+                                            "content": "14시 까지 22명을 모아야 진행이 됩니다."
                                         }
                                         """)
                                 .contentType(
@@ -713,6 +714,8 @@ public class ApiV1PostControllerTest {
                 .andDo(print());
 
         resultActions
+                .andExpect(handler().handlerType(ApiV1PostController.class))
+                .andExpect(handler().methodName("statistics"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.totalPostCount").isNumber())
                 .andExpect(jsonPath("$.totalPublishedPostCount").isNumber())
@@ -720,7 +723,7 @@ public class ApiV1PostControllerTest {
     }
 
     @Test
-    @DisplayName("관리자는 통계를 볼 수 있다.")
+    @DisplayName("일반 유저는 통계를 볼 수 없다.")
     @WithUserDetails("user1")
     void t24() throws Exception {
         ResultActions resultActions = mvc

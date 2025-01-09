@@ -1,6 +1,5 @@
 package com.ll.spring_jwt_2025_01_07.domain.post.post.controller;
 
-import com.ll.spring_jwt_2025_01_07.domain.controller.BaseController;
 import com.ll.spring_jwt_2025_01_07.domain.member.member.entity.Member;
 import com.ll.spring_jwt_2025_01_07.domain.post.post.dto.PostDto;
 import com.ll.spring_jwt_2025_01_07.domain.post.post.dto.PostWithContentDto;
@@ -23,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 public class ApiV1PostController {
     private final PostService postService;
     private final Rq rq;
+
 
     record PostStatisticsResBody(
             long totalPostCount,
@@ -108,7 +108,7 @@ public class ApiV1PostController {
     public RsData<PostWithContentDto> write(
             @RequestBody @Valid PostWriteReqBody reqBody
     ) {
-        Member actor = rq.getActor();
+        Member actor = rq.findByActor().get();
 
         Post post = postService.write(
                 actor,

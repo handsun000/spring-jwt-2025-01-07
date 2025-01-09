@@ -21,7 +21,9 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler {
     @ExceptionHandler(NoHandlerFoundException.class)
     public ResponseEntity<RsData<Void>> handle(NoHandlerFoundException ex) {
+
         if (AppConfig.isNotProd()) ex.printStackTrace();
+
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(new RsData<>(

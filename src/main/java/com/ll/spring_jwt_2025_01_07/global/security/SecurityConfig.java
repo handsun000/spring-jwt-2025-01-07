@@ -55,7 +55,6 @@ public class SecurityConfig {
                                                             new RsData("401-1", "사용자 인증정보가 올바르지 않습니다.")
                                                     )
                                             );
-
                                         }
                                 )
                                 .accessDeniedHandler(

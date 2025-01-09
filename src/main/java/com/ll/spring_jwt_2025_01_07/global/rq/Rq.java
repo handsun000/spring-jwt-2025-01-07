@@ -9,16 +9,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 
-import java.security.Security;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 // Request/Response 를 추상화한 객체
@@ -27,12 +23,10 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 public class Rq {
-    private final HttpServletRequest request;
+    private final HttpServletRequest req;
+    private final HttpServletResponse resp;
     private final MemberService memberService;
-    private final HttpServletResponse response;
 
-    // 스프링 시큐리티가 이해하는 방식으로 강제 로그인 처리
-    // 임시함수
     public void setLogin(Member member) {
         UserDetails user = new SecurityUser(
                 member.getId(),
@@ -57,7 +51,7 @@ public class Rq {
                                 .getAuthentication()
                 )
                 .map(Authentication::getPrincipal)
-                .filter(principal -> principal instanceof UserDetails)
+                .filter(principal -> principal instanceof SecurityUser)
                 .map(principal -> (SecurityUser) principal)
                 .map(securityUser -> new Member(securityUser.getId(), securityUser.getUsername()))
                 .orElse(null);
@@ -71,18 +65,35 @@ public class Rq {
                 .secure(true)
                 .httpOnly(true)
                 .build();
-
-        response.addHeader("Set-Cookie", cookie.toString());
+        resp.addHeader("Set-Cookie", cookie.toString());
     }
 
     public String getCookieValue(String name) {
         return Optional
-                .ofNullable(request.getCookies())
-                .stream()
+                .ofNullable(req.getCookies())
+                .stream() // 1 ~ 0
                 .flatMap(cookies -> Arrays.stream(cookies))
                 .filter(cookie -> cookie.getName().equals(name))
                 .map(cookie -> cookie.getValue())
                 .findFirst()
                 .orElse(null);
+    }
+
+    public void setHeader(String name, String value) {
+        resp.setHeader(name, value);
+    }
+
+    public String getHeader(String name) {
+        return req.getHeader(name);
+    }
+
+    // getActor 와 다르게
+    // 이 함수에서 리턴하는 것은 야매가 아니다.
+    public Optional<Member> findByActor() {
+        Member actor = getActor();
+
+        if (actor == null) return Optional.empty();
+
+        return memberService.findById(actor.getId());
     }
 }

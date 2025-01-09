@@ -1,6 +1,5 @@
 package com.ll.spring_jwt_2025_01_07.domain.member.member.controller;
 
-import com.ll.spring_jwt_2025_01_07.domain.controller.BaseController;
 import com.ll.spring_jwt_2025_01_07.domain.member.member.dto.MemberDto;
 import com.ll.spring_jwt_2025_01_07.domain.member.member.entity.Member;
 import com.ll.spring_jwt_2025_01_07.domain.member.member.service.AuthTokenService;
@@ -8,14 +7,11 @@ import com.ll.spring_jwt_2025_01_07.domain.member.member.service.MemberService;
 import com.ll.spring_jwt_2025_01_07.global.exceptions.ServiceException;
 import com.ll.spring_jwt_2025_01_07.global.rq.Rq;
 import com.ll.spring_jwt_2025_01_07.global.rsData.RsData;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/members")
@@ -96,10 +92,8 @@ public class ApiV1MemberController {
     @GetMapping("/me")
     @Transactional(readOnly = true)
     public MemberDto me() {
-        Member actor = rq.getActor();
-        Member member = memberService.findById(actor.getId()).get();
+        Member actor = rq.findByActor().get();
 
-        return new MemberDto(member);
+        return new MemberDto(actor);
     }
-
 }
