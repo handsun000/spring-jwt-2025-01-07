@@ -5,6 +5,12 @@ spring:
     name: security-jwt-2025-01-07
   profiles:
     active: dev
+  mvc:
+    favicon:
+      enabled: false
+  web:
+    resources:
+      add-mappings: false
   output:
     ansi:
       enabled: always
