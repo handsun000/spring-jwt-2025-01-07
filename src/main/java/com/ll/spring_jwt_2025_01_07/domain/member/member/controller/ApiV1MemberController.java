@@ -20,7 +20,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/members")
 @RequiredArgsConstructor
-public class ApiV1MemberController extends BaseController {
+public class ApiV1MemberController {
     private final MemberService memberService;
     private final AuthTokenService authTokenService;
     private final Rq rq;
@@ -68,8 +68,7 @@ public class ApiV1MemberController extends BaseController {
     @PostMapping("/login")
     @Transactional(readOnly = true)
     public RsData<MemberLoginResBody> login(
-            @RequestBody @Valid MemberLoginReqBody reqBody,
-            HttpServletResponse response
+            @RequestBody @Valid MemberLoginReqBody reqBody
     ) {
         Member member = memberService
                 .findByUsername(reqBody.username)
@@ -80,8 +79,8 @@ public class ApiV1MemberController extends BaseController {
 
         String accessToken = memberService.genAccessToken(member);
 
-        setCookie(response, "accessToken", accessToken);
-        setCookie(response, "apiKey", member.getApiKey());
+        rq.setCookie("accessToken", accessToken);
+        rq.setCookie("apiKey", member.getApiKey());
 
         return new RsData<>(
                 "200-1",

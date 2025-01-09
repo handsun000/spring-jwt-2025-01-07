@@ -3,6 +3,7 @@ package com.ll.spring_jwt_2025_01_07.global.rq;
 import com.ll.spring_jwt_2025_01_07.domain.member.member.entity.Member;
 import com.ll.spring_jwt_2025_01_07.domain.member.member.service.MemberService;
 import com.ll.spring_jwt_2025_01_07.global.security.SecurityUser;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseCookie;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 
 import java.security.Security;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,6 +27,7 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 public class Rq {
+    private final HttpServletRequest request;
     private final MemberService memberService;
     private final HttpServletResponse response;
 
@@ -70,5 +73,16 @@ public class Rq {
                 .build();
 
         response.addHeader("Set-Cookie", cookie.toString());
+    }
+
+    public String getCookieValue(String name) {
+        return Optional
+                .ofNullable(request.getCookies())
+                .stream()
+                .flatMap(cookies -> Arrays.stream(cookies))
+                .filter(cookie -> cookie.getName().equals(name))
+                .map(cookie -> cookie.getValue())
+                .findFirst()
+                .orElse(null);
     }
 }
